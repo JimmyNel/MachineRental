@@ -1,0 +1,180 @@
+﻿@using MachineRental.Common
+@model IEnumerable<MachineRental.Models.Rental>
+@*
+    Note: I've set the model for this view to IEnumerable<Customer>.
+    This is a simple interface implemented by the list class. Since
+    in this view we only want to iterate over this list, and we don't
+    need any of the operations in the List class (eg Add, Remove, etc),
+    it's better to use the IEnumerable interface, which allows use to
+    iterate over the list. If in the future, we replace the List with a
+    different data structure, as long as it is enumerable, our view code
+    will remain unchanged.
+*@
+
+@{
+    ViewBag.Title = "Locations";
+}
+
+<br />
+<br />
+
+<!-- Table Card -->
+<div class="pmd-card pmd-z-depth">
+    <div class="table-responsive">
+        <table id="rentals" class="table pmd-table table-hover table-striped display responsive nowrap" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th style="width:17.6%">Location n°</th>
+                    <th style="width:17.6%">Client</th>
+                    <th style="width:17.6%">Chantier</th>
+                    <th style="width:12%">Générer bon dattachement</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var rental in Model)
+                {
+                    <!-- Simple list Modal -->
+                    <div tabindex="-1" class="modal fade" id="simple-listing-dialog-@rental.Id" style="display: none;" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header pmd-modal-bordered">
+                                    <button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button>
+                                    <h2 class="pmd-card-title-text">Détails de la location</h2>
+                                </div>
+                                <div class="pmd-modal-list">
+                                    <dl class="dl-horizontal">
+                                        <dt>@Html.DisplayNameFor(model => model.Id)</dt>
+                                        <dd>@Html.DisplayFor(m => rental.Id)</dd>
+                                        <dt>@Html.DisplayNameFor(model => model.RentalStatus)</dt>
+                                        <dd>@Html.DisplayFor(m => @rental.RentalStatus)</dd>
+                                        <dt>@Html.DisplayNameFor(model => model.Order.CustomerId)</dt>
+                                        <dd>@Html.DisplayFor(m => @rental.Order.Customer.Name)</dd>
+                                        <dd>@Html.DisplayFor(m => @rental.Order.Customer.Contact)</dd>
+                                        <dd>@Html.DisplayFor(m => @rental.Order.Customer.Phone)</dd>
+
+                                        <dt>@Html.DisplayNameFor(model => model.MachineId)</dt>
+                                        <dd>@Html.DisplayFor(m => @rental.Machine.Number)</dd>
+                                        <dt>@Html.DisplayNameFor(model => model.Equipment)</dt>
+                                        <dd>@Html.DisplayFor(m => @rental.Equipment)</dd>
+
+                                        <dt>@Html.DisplayNameFor(model => model.TimeStartRentalDate)</dt>
+                                        <dd>@rental.TimeStartRentalDate.ToString("d")</dd>
+                                        <dt>@Html.DisplayNameFor(model => model.TimeEndRentalDate)</dt>
+                                        @{var timeEndRentalDate = rental.TimeEndRentalDate?.ToString("d");}
+                                        <dd>@timeEndRentalDate</dd>
+
+                                        <dt>@Html.DisplayNameFor(model => model.AddressId)</dt>
+                                        <dd>@Html.DisplayFor(m => @rental.Address.Address1)</dd>
+                                        <dd>@Html.DisplayFor(m => @rental.Address.Address2)</dd>
+                                        <dd>@Html.DisplayFor(m => @rental.Address.ZipCode)</dd>
+                                        <dd>@Html.DisplayFor(m => @rental.Address.City)</dd>
+                                        <dd>@Html.DisplayFor(m => @rental.Address.Country)</dd>
+
+                                        <dt>@Html.DisplayNameFor(model => model.SiteManager)</dt>
+                                        <dd>@Html.DisplayFor(m => @rental.SiteManager)</dd>
+                                        <dt>@Html.DisplayNameFor(model => model.ManagerPhoneNumber)</dt>
+                                        <dd>@Html.DisplayFor(m => @rental.ManagerPhoneNumber)</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <tr>
+                        <td><a data-target="#simple-listing-dialog-@rental.Id" data-toggle="modal">@rental.Id</a></td>
+                        <td>@rental.Order.Customer.Name</td>
+                        <td>@rental.Address.City</td>
+                        <td>
+                            <button class="btn btn-sm pmd-btn-fab pmd-btn-raised pmd-ripple-effect btn-primary"
+                                    type="button">
+                                <i class="material-icons md-light pmd-sm"
+                                   onclick="location.href = '@Url.Action("Generate", "Attachment", new {id = @rental.Id})'">add</i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+@section scripts
+{
+    <script>
+    $(document).ready(function () {
+        // Manage Toastr after form post
+        var success = "@TempData[Constant.Success]";
+        if (success === "@Constant.New") {
+            toastr.success("@Constant.NewAttachmentSaveSuccess");
+        }
+        //Build JQuery Datatable
+        var table = $('#rentals').DataTable({
+            responsive: {
+                details: {
+                    type: 'column',
+                    target: 'tr'
+                }
+            },
+            order: [0, 'asc'],
+            bFilter: true,
+            bLengthChange: true,
+            pagingType: "simple",
+            "paging": true,
+            "searching": true,
+            "language": {
+                "info": " _START_ - _END_ sur _TOTAL_ ",
+                "sLengthMenu": "<span class='custom-select-title'>Résultats par page:</span> <span class='custom-select'> _MENU_ </span>",
+                "sSearch": "",
+                "sSearchPlaceholder": "Rechercher",
+                "sInfoEmpty": "Affichage de l'&eacute;l&eacute;ment 0 &agrave; 0 sur 0 &eacute;l&eacute;ment",
+                "sInfoFiltered": "(filtr&eacute; de _MAX_ &eacute;l&eacute;ments au total)",
+                processing: "Traitement en cours...",
+                infoEmpty: "Affichage de l'&eacute;lement 0 &agrave; 0 sur 0 &eacute;l&eacute;ments",
+                loadingRecords: "Chargement en cours...",
+                zeroRecords: "Aucun &eacute;l&eacute;ment &agrave; afficher",
+                emptyTable: "Aucune donnée disponible dans le tableau",
+                aria: {
+                    sortAscending: ": activer pour trier la colonne par ordre croissant",
+                    sortDescending: ": activer pour trier la colonne par ordre décroissant"
+                },
+                "paginate": {
+                    "sNext": " ",
+                    "sPrevious": " "
+                }
+            },
+            dom:
+                "<'pmd-card-title'<'data-table-title'><'search-paper pmd-textfield'f>>" +
+                "<'custom-select-info'<'custom-select-item'><'custom-select-action'>>" +
+                "<'row'<'col-sm-12'tr>>" +
+                "<'pmd-card-footer' <'pmd-datatable-pagination' l i p>>"
+        });
+
+        // set datatables options
+        $('.custom-select-info').hide();
+        $("div.data-table-title").html('<h2 class="pmd-card-title-text">Liste des locations</h2>');
+
+        // set column search
+        $('#rentals thead tr').clone(true).appendTo( '#rentals thead' );
+        $('#rentals thead tr:eq(1) th').each( function (i) {
+            var title = $(this).text();
+            $(this).html( '<input type="text" placeholder="Rechercher '+title+'" />' );
+
+            $( 'input', this ).on( 'keyup change', function () {
+                if ( table.column(i).search() !== this.value ) {
+                    table
+                        .column(i)
+                        .search( this.value )
+                        .draw();
+                }
+            } );
+        } );
+
+        // activate tooltip management
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+
+    });
+    </script>
+}
+

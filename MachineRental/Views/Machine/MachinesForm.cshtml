@@ -1,0 +1,101 @@
+﻿@model MachineRental.ViewModels.MachineViewModel
+@{
+    ViewBag.Title = "Formulaire Machines";
+}
+
+@if (Model.Machine.Id == 0)
+{
+    <h1 class="text-center">Nouvelle machine</h1>
+}
+else
+{
+    <h1 class="text-center">Modifier machine</h1>
+}
+<hr/>
+<br/>
+
+<div class="row">
+    <div class="col-md-12 mb-md-0 mb-5">
+        @using (Html.BeginForm("Save", "Machine", FormMethod.Post,
+            new {id = "machinesForm"}))
+        {
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group pmd-textfield pmd-textfield-floating-label">
+                        @Html.LabelFor(m => m.Machine.Number, new { @class = "control-label" })
+                        @Html.TextBoxFor(m => m.Machine.Number, new { @class = "form-control", required = "required" })
+                        @Html.ValidationMessageFor(m => m.Machine.Number)
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group pmd-textfield pmd-textfield-floating-label">
+                        @Html.LabelFor(m => m.Machine.MachineTypeId)
+                        @Html.DropDownListFor(m => m.Machine.MachineTypeId, new SelectList(Model.MachineTypes, "Id", "Name"), "", new { @class = "form-control", required = "required" })
+                        @Html.ValidationMessageFor(m => m.Machine.MachineTypeId)
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group pmd-textfield pmd-textfield-floating-label">
+                        @Html.LabelFor(m => m.Machine.ParkNumberId)
+                        @Html.DropDownListFor(m => m.Machine.ParkNumberId, new SelectList(Model.ParkNumbers, "Id", "Number"), "", new { @class = "form-control", required = "required" })
+                        @Html.ValidationMessageFor(m => m.Machine.ParkNumberId)
+                    </div>
+                </div>
+            </div>
+            <h2 class="text-center">Emplacement actuel</h2>
+            <hr/>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group pmd-textfield pmd-textfield-floating-label">
+                        @Html.LabelFor(m => m.Address.Address1, new { @class = "control-label" })
+                        @Html.TextBoxFor(m => m.Address.Address1, new { @class = "form-control", required = "required" })
+                        @Html.ValidationMessageFor(m => m.Address.Address1)
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group pmd-textfield pmd-textfield-floating-label">
+                        @Html.LabelFor(m => m.Address.Address2, new { @class = "control-label" })
+                        @Html.TextBoxFor(m => m.Address.Address2, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Address.Address2)
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group pmd-textfield pmd-textfield-floating-label">
+                        @Html.LabelFor(m => m.Address.ZipCode, new { @class = "control-label" })
+                        @Html.TextBoxFor(m => m.Address.ZipCode, new { @class = "form-control", required = "required" })
+                        @Html.ValidationMessageFor(m => m.Address.ZipCode)
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group pmd-textfield pmd-textfield-floating-label">
+                        @Html.LabelFor(m => m.Address.City, new { @class = "control-label" })
+                        @Html.TextBoxFor(m => m.Address.City, new { @class = "form-control", required = "required" })
+                        @Html.ValidationMessageFor(m => m.Address.City)
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group pmd-textfield pmd-textfield-floating-label">
+                        @Html.LabelFor(m => m.Address.Country, new { @class = "control-label" })
+                        @Html.TextBoxFor(m => m.Address.Country, new { @class = "form-control", required = "required" })
+                        @Html.ValidationMessageFor(m => m.Address.Country)
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="text-center text-md-left">
+                @Html.HiddenFor(m => m.Machine.Id)
+                @Html.HiddenFor(a => a.Address.Id)
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-primary pmd-ripple-effect pmd-btn-raised">Envoyer</button>
+            </div>
+        }
+    </div>
+</div>
+
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+}

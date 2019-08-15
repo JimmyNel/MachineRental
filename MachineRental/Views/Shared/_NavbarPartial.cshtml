@@ -1,0 +1,86 @@
+﻿@using MachineRental.Common
+
+
+<nav id="navbar-container" class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+        @Html.ActionImage("Index", "Home", null, "/images/morel.jpg", "morel.jpg", new { @class = "navbar-brand", id="logo-navbar" })
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarColor03">
+            <ul class="navbar-nav mr-auto">
+                
+                @*<li class="nav-item dropdown @(ViewContext.RouteData.Values["Controller"].ToString() == "Order" ? "active" : "")">
+                    @Html.ActionLink("COMMANDES", "Index", "Order", null,
+                    new Dictionary<string, object> { { "class", "nav-link" } })
+                </li>
+                <li class="nav-item dropdown @( ViewContext.RouteData.Values["Controller"].ToString() == "Rental" ? "active" : "")">
+                    @Html.ActionLink("LOCATIONS", "Index", "Rental", null,
+                    new Dictionary<string, object> { { "class", "nav-link" } })
+                </li>
+                <li class="nav-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Attachment" ? "active" : "")">
+                    @Html.ActionLink("ATTACHEMENTS", "Index", "Attachment", null, new { @class = "nav-link" })
+                </li>
+                <li class="nav-item dropdown @(new List<string> { "Customer", "Machine", "Machinist" }.Contains(ViewContext.RouteData.Values["Controller"].ToString()) ? "active" : "")">
+                    @Html.ActionLink("RESSOURCES", "#", "#", null,
+                    new Dictionary<string, object> { { "class", "nav-link dropdown-toggle" }, { "data-toggle", "dropdown" }, { "id", "resources" }, { "aria-expanded", "false" } })
+                    <div class="dropdown-menu" aria-labelledby="resources">
+                        @Html.ActionLink("CLIENTS", "Index", "Customer", null, new { @class = "nav-link" })
+                        @Html.ActionLink("MACHINES", "Index", "Machine", null, new { @class = "nav-link" })
+                        @Html.ActionLink("CONDUCTEURS", "Index", "Machinist", null, new { @class = "nav-link" })
+                    </div>
+                </li>*@
+                
+                @if (Request.IsAuthenticated)
+                {
+                    if (User.IsInRole(Constant.RentalManager))
+                    {
+                        <li class="nav-item dropdown @(ViewContext.RouteData.Values["Controller"].ToString() == "Order" ? "active" : "")">
+                            @Html.ActionLink("COMMANDES", "Index", "Order", null,
+                            new Dictionary<string, object> { { "class", "nav-link" } })
+                        </li>
+                        <li class="nav-item dropdown @( ViewContext.RouteData.Values["Controller"].ToString() == "Rental" ? "active" : "")">
+                            @Html.ActionLink("LOCATIONS", "Index", "Rental", null,
+                            new Dictionary<string, object> { { "class", "nav-link" } })
+                        </li>
+                        <li class="nav-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Attachment" ? "active" : "")">
+                            @Html.ActionLink("ATTACHEMENTS", "Index", "Attachment", null, new { @class = "nav-link" })
+                        </li>
+                        <li class="nav-item dropdown @(new List<string> { "Customers", "Machines", "Machinists" }.Contains(ViewContext.RouteData.Values["Controller"].ToString()) ? "active" : "")">
+                            @Html.ActionLink("RESSOURCES", "#", "#", null,
+                            new Dictionary<string, object> { { "class", "nav-link dropdown-toggle" }, { "data-toggle", "dropdown" }, { "id", "resources" }, { "aria-expanded", "false" } })
+                            <div class="dropdown-menu" aria-labelledby="resources">
+                                @Html.ActionLink("CLIENTS", "Index", "Customer", null, new { @class = "nav-link" })
+                                @Html.ActionLink("MACHINES", "Index", "Machine", null, new { @class = "nav-link" })
+                                @Html.ActionLink("CONDUCTEURS", "Index", "Machinist", null, new { @class = "nav-link" })
+                            </div>
+                        </li>
+                    }
+                    else if (User.IsInRole(Constant.Machinist))
+                    {
+                        <li class="nav-item dropdown @( ViewContext.RouteData.Values["Controller"].ToString() == "Rental" ? "active" : "")">
+                            @Html.ActionLink("LOCATIONS", "Index", "Rental", null,
+                            new Dictionary<string, object> { { "class", "nav-link" } })
+                        </li>
+                        <li class="nav-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Attachment" ? "active" : "")">
+                            @Html.ActionLink("ATTACHEMENTS", "Index", "Attachment", null, new { @class = "nav-link" })
+                        </li>
+                    }
+                }
+            </ul>
+            @Html.Partial("_LoginPartial")
+        </div>
+
+    </div>
+</nav>
+
+@section scripts{
+    <script>
+        $(document).on('click', 'ul li', function () {
+            $(this).addClass('active').siblings().removeClass('active');
+        });
+    </script>
+}
+
+

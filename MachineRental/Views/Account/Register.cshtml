@@ -1,0 +1,43 @@
+﻿@model MachineRental.ViewModels.RegisterViewModel
+@{
+    ViewBag.Title = "Créer un nouvel utilisateur";
+}
+
+
+<div class="row">
+    <div class="center-block col-md-4" style="float:none">
+        @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+        {
+            @Html.AntiForgeryToken()
+            <h2>Créez un nouvel utilisateur.</h2>
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "validation-summary-errors" })
+            <div class="form-group pmd-textfield pmd-textfield-floating-label">
+                @Html.LabelFor(m => m.Email, new { @class = "control-label pmd-input-group-label" })
+                <div class="input-group">
+                    <div class="input-group-addon"><i class="material-icons md-dark pmd-sm">email</i></div>
+                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                </div>
+                @Html.ValidationMessageFor(m => m.Email)
+            </div>
+            <div class="form-group pmd-textfield pmd-textfield-floating-label">
+                @Html.LabelFor(m => m.RoleId, new { @class = "control-label pmd-input-group-label" })
+                <div class="input-group">
+                    <div class="input-group-addon"><i class="material-icons md-dark pmd-sm">assignment_ind</i></div>
+                    @Html.DropDownListFor(m => m.RoleId, new SelectList(Model.Roles, "Id", "Name"), "", new { @class = "form-control", required = "required" })
+                </div>
+                @Html.ValidationMessageFor(m => m.RoleId)
+            </div>
+            <br />
+            <div class="form-group">
+                <div class="text-center text-md-left">
+                    <input type="submit" class="btn btn-primary pmd-ripple-effect pmd-btn-raised" value="Créer Utilisateur" />
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

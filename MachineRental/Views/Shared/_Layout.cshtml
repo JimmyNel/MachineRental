@@ -1,0 +1,28 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+    <link rel="icon" type="image/x-icon" href="/favicon.png" />
+    <title>Morel Location</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+
+</head>
+<body class="body-initial">
+    @Html.Partial("_NavbarPartial")
+    <div id="layout-container" class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - Groupe Poisson</p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/lib")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

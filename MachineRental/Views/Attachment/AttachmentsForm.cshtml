@@ -1,0 +1,231 @@
+﻿@using System.Drawing
+@model MachineRental.ViewModels.AttachmentViewModel
+@{
+    ViewBag.Title = "Formulaire Attachement Journalier";
+}
+
+<div class="canvas-container" style="display:none">
+    <canvas id="sketchpad"></canvas>
+    <div class="row">
+        <input id="btnSave" class="btn btn-primary pmd-ripple-effect pmd-btn-raised col-md-4 col-xs-4 col-sm-4 col-lg-4" type="button" value="Enregistrer">
+        <input id="btnClear" class="btn btn-primary pmd-ripple-effect pmd-btn-raised col-md-4 col-xs-4 col-sm-4 col-lg-4" type="button" value="Effacer">
+        <input id="btnReturn" class="btn btn-primary pmd-ripple-effect pmd-btn-raised col-md-4 col-xs-4 col-sm-4 col-lg-4" type="button" value="Retour">
+    </div>
+</div>
+
+<div id="form-container" class="row">
+    <div class="col-md-12 mb-md-0 mb-5">
+        @using (Html.BeginForm("Save", "Attachment", FormMethod.Post,
+                                        new { id = "attachmentsForm" }))
+        {
+            if (Model.Attachment.Id == 0)
+            {
+                <h1 class="text-center">Attachement journalier</h1>
+            }
+            else
+            {
+                <h1 class="text-center">Modifier attachement journalier</h1>
+            }
+            <hr />
+            <br />
+            @Html.ValidationSummary(false)
+            <h2 class="text-center">Client</h2>
+            <hr />
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group pmd-textfield pmd-textfield-floating-label">
+                        @Html.LabelFor(m => m.Rental.Order.CustomerId, new { @class = "control-label" })
+                        @Html.DropDownListFor(m => m.Rental.Order.CustomerId, new SelectList(Model.Customers, "Id", "Name"), "", new { @class = "form-control", required = "required", disabled="true" })
+                        @Html.ValidationMessageFor(m => m.Rental.Order.CustomerId)
+                    </div>
+                </div>
+            </div>
+            <h2 class="text-center">Adresse chantier</h2>
+            <hr />
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group pmd-textfield pmd-textfield-floating-label">
+                        @Html.LabelFor(m => m.Rental.Address.Address1, new { @class = "control-label" })
+                        @Html.TextBoxFor(m => m.Rental.Address.Address1, new { @class = "form-control", required = "required", @readonly="readonly" })
+                        @Html.ValidationMessageFor(m => m.Rental.Address.Address1)
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group pmd-textfield pmd-textfield-floating-label">
+                        @Html.LabelFor(m => m.Rental.Address.Address2, new { @class = "control-label" })
+                        @Html.TextBoxFor(m => m.Rental.Address.Address2, new { @class = "form-control", @readonly="readonly" })
+                        @Html.ValidationMessageFor(m => m.Rental.Address.Address2)
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group pmd-textfield pmd-textfield-floating-label">
+                        @Html.LabelFor(m => m.Rental.Address.ZipCode, new { @class = "control-label" })
+                        @Html.TextBoxFor(m => m.Rental.Address.ZipCode, new { @class = "form-control", required = "required", @readonly="readonly" })
+                        @Html.ValidationMessageFor(m => m.Rental.Address.ZipCode)
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group pmd-textfield pmd-textfield-floating-label">
+                        @Html.LabelFor(m => m.Rental.Address.City, new { @class = "control-label" })
+                        @Html.TextBoxFor(m => m.Rental.Address.City, new { @class = "form-control", required = "required", @readonly="readonly" })
+                        @Html.ValidationMessageFor(m => m.Rental.Address.City)
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group pmd-textfield pmd-textfield-floating-label">
+                        @Html.LabelFor(m => m.Rental.Address.Country, new { @class = "control-label" })
+                        @Html.TextBoxFor(m => m.Rental.Address.Country, new { @class = "form-control", required = "required", @readonly="readonly" })
+                        @Html.ValidationMessageFor(m => m.Rental.Address.Country)
+                    </div>
+                </div>
+            </div>
+            <h2 class="text-center">Détails</h2>
+            <hr />
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group pmd-textfield pmd-textfield-floating-label">
+                        @Html.LabelFor(m => m.Rental.Machinist.LastName, new { @class = "control-label" })
+                        @Html.TextBoxFor(m => m.Rental.Machinist.LastName, new { @class = "form-control", required = "required", @readonly="readonly" })
+                        @Html.ValidationMessageFor(m => m.Rental.Machinist.LastName)
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group pmd-textfield pmd-textfield-floating-label">
+                        @Html.Label("WorkingHoursTicks", "Nombre d'heures", new { @class = "control-label" })
+                        @if (Model.Attachment.Id == 0)
+                        {
+                            <input type="number" name="hours" class="form-control" value="0" min="0" , max="23" />
+                        }
+                        else
+                        {
+                            <input type="number" name="hours" class="form-control" value="@Model.Hours" min="0" , max="23" />
+                        }
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group pmd-textfield pmd-textfield-floating-label">
+                        @Html.Label("WorkingMinutesTicks", "Nombre de minutes", new { @class = "control-label" })
+                        @if (Model.Attachment.Id == 0)
+                        {
+                            <input type="number" name="minutes" class="form-control" value="0" min="0" , max="59" />
+                        }
+                        else
+                        {
+                            <input type="number" name="minutes" class="form-control" value="@Model.Minutes" min="0" , max="59" />
+                        }
+
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group pmd-textfield pmd-textfield-floating-label">
+                        @Html.LabelFor(m => m.Attachment.AttachmentDate)
+                        @Html.TextBoxFor(m => m.Attachment.AttachmentDate, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Attachment.AttachmentDate)
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group pmd-textfield pmd-textfield-floating-label">
+                        @Html.LabelFor(m => m.Rental.Machine.Number, new { @class = "control-label" })
+                        @Html.TextBoxFor(m => m.Rental.Machine.Number, new { @class = "form-control", required = "required" })
+                        @Html.ValidationMessageFor(m => m.Rental.Machine.Number)
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group pmd-textfield pmd-textfield-floating-label">
+                        @Html.LabelFor(m => m.Attachment.Remarks, new { @class = "control-label" })
+                        @Html.TextAreaFor(m => m.Attachment.Remarks, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Attachment.Remarks)
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <div class="row">
+                <div class="checkbox pmd-default-theme">
+                    <label class="pmd-checkbox pmd-checkbox-ripple-effect">
+                        @if (Model.Attachment.Id != 0)
+                        {
+                            @Html.CheckBoxFor(m => m.Attachment.IsApproved, new { value="True", @onclick="return false;"})
+                            <span>@Html.LabelFor(m => m.Attachment.IsApproved)</span><br />
+                        }
+                        else
+                        {
+                            @Html.CheckBoxFor(m => m.Attachment.IsApproved)
+                            <span>@Html.LabelFor(m => m.Attachment.IsApproved)</span><br />
+                            @*@Html.ValidationMessageFor(m => m.Attachment.IsApproved)*@
+                        }
+                    </label>
+                </div>
+            </div>
+            <div class="row">
+                @{
+                    // if update attachment  (with existing signature)
+                    if (Model.SignatureImg.Data != null)
+                    {
+                        var base64String = Convert.ToBase64String(@Model.SignatureImg.Data, 0, @Model.SignatureImg.Data.Length);
+                        var dataUrl = "data:image/png;base64," + base64String;
+                        <label class="control-label">Signature du client</label>
+                        <img id="canvasimg" src="@dataUrl" style="border: 1px solid black;">
+                        <canvas id="canvas" style="display: none"></canvas>
+                        @Html.CheckBoxFor(m => m.Attachment.IsSigned, new { @checked = "checked", style = "display:none" })
+                        @Html.ValidationMessageFor(m => m.Attachment.IsSigned)
+                    }
+                    // if signature saved on new attachment
+                    else if (Model.dataUrl != null)
+                    {
+                        <input id="btnSignature" type="button" class="btn btn-info pmd-ripple-effect pmd-btn-raised" value="Ajouter Signature" style="display: none" />
+                        <input id="btnClearCanvas" type="button" class="btn btn-warning pmd-ripple-effect pmd-btn-raised" value="Effacer Signature"/>
+                        <img id="canvasimg" src="@Model.dataUrl" style="border: 1px solid black;">
+                        <canvas id="canvas" style="display: none"></canvas>
+                        <input id="blobdata" name="dataUrl" type="text" readonly style="display:none;" value="@Model.dataUrl" />
+                        @Html.CheckBoxFor(m => m.Attachment.IsSigned, new { @checked= "checked", style = "display:none" })
+                        @*@Html.ValidationMessageFor(m => m.Attachment.IsSigned)*@
+                    }
+                    // if new Attachement
+                    else
+                    {
+                        <input id = "btnSignature" type = "button" class="btn btn-info pmd-ripple-effect pmd-btn-raised" value="Ajouter Signature" />
+                        <input id = "btnClearCanvas" type="button" class="btn btn-warning pmd-ripple-effect pmd-btn-raised" value="Effacer Signature" style="display: none" />
+                        <img id = "canvasimg" style="display:none;">
+                        <canvas id = "canvas" style="display: none"></canvas>
+                        <input id = "blobdata" name="dataUrl" type="text" readonly style="display:none;" />
+                        @Html.CheckBoxFor(m => m.Attachment.IsSigned, new { style = "display:none" })
+                        @Html.ValidationMessageFor(m => m.Attachment.IsSigned)
+                    }
+                }
+            </div>
+            <div class="row">
+                <hr />
+                <p>
+                    Toute journée commencée est dûe en totalité.
+                    Toute fin de location sans préavis minimum de 24 heures entraîne la facturation d'une journée. 
+                    Minimum journalier facturé : 8 heures. Temps perdu pour crevaison non déductible. 
+                    Intempérie facturée minimum 2 heures.
+                </p>
+            </div>
+            <br />
+            <div class="text-center text-md-left">
+                @Html.HiddenFor(m => m.SignatureImg.Id)
+                @Html.HiddenFor(a => a.Attachment.Id)
+                @Html.HiddenFor(a => a.Rental.Id)
+                @Html.HiddenFor(a => a.Rental.RentalStatus)
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-primary pmd-ripple-effect pmd-btn-raised">Envoyer</button>
+            </div>
+        }
+    </div>
+</div>
+
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/form-fiche-salarie")
+
+}
+

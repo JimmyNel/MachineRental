@@ -1,0 +1,216 @@
+﻿@using MachineRental.Common
+@model IEnumerable<MachineRental.Models.Attachment>
+
+@{
+    ViewBag.Title = "Attachements journaliers";
+}
+
+<br />
+@*<button class="btn pmd-btn-fab pmd-btn-raised pmd-tooltip pmd-ripple-effect btn-primary"
+        data-toggle="tooltip" data-placement="right" title="Ajouter une machine"
+        type="button" onclick="location.href = '@Url.Action("Create", "Attachments")'">
+    <i class="material-icons pmd-md">add</i>
+</button>
+<br />
+<br />*@
+
+<!-- Table Card -->
+<div class="pmd-card pmd-z-depth">
+    <div class="table-responsive">
+        <table id="attachments" class="table pmd-table table-hover table-striped display responsive" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th >@Html.DisplayNameFor(model => model.Id)</th>
+                    <th >@Html.DisplayNameFor(model => model.AttachmentDate)</th>
+                    <th >@Html.DisplayNameFor(model => model.Rental.MachinistId)</th>
+                    <th >@Html.ShortNameFor(model => model.First().Rental.AddressId)</th>
+                    <th >@Html.DisplayNameFor(model => model.WorkingHoursTicks)</th>
+                    <th >Modifier / Supprimer</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var attachment in Model)
+                {
+                    <!-- Simple list -->
+                    <div tabindex="-1" class="modal fade" id="simple-listing-dialog-@attachment.Id" style="display: none;" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header pmd-modal-bordered">
+                                    <button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button>
+                                    <h2 class="pmd-card-title-text">Détails de la machine</h2>
+                                </div>
+                                <div class="pmd-modal-list">
+                                    <dl class="dl-horizontal">
+                                        <dt>@Html.DisplayNameFor(model => model.AttachmentDate)</dt>
+                                        <dd>@attachment.AttachmentDate.ToString("F")</dd>
+                                        <dt>@Html.DisplayNameFor(model => model.Rental.Order.Customer.Name)</dt>
+                                        <dd>@Html.DisplayFor(m => attachment.Rental.Order.Customer.Name)</dd>
+                                        <dt>@Html.DisplayNameFor(model => model.Rental.Address)</dt>
+                                        <dd>@Html.DisplayFor(m => attachment.Rental.Address.Address1)</dd>
+                                        <dd>@Html.DisplayFor(m => attachment.Rental.Address.Address2)</dd>
+                                        <dd>@Html.DisplayFor(m => attachment.Rental.Address.ZipCode)</dd>
+                                        <dd>@Html.DisplayFor(m => attachment.Rental.Address.City)</dd>
+                                        <dd>@Html.DisplayFor(m => attachment.Rental.Address.Country)</dd>
+
+                                        <dt>@Html.DisplayNameFor(model => model.Rental.Machinist.LastName)</dt>
+                                        <dd>@Html.DisplayFor(m => attachment.Rental.Machinist.LastName)</dd>
+                                        <dt>@Html.DisplayNameFor(model => model.Rental.Machine.Number)</dt>
+                                        <dd>@Html.DisplayFor(m => attachment.Rental.Machine.Number)</dd>
+                                        <dt>@Html.DisplayNameFor(model => model.WorkingHoursTicks)</dt>
+                                        @{ var workingHours = TimeSpan.FromTicks(attachment.WorkingHoursTicks).ToString(@"hh\hmm");}
+                                        <dd>@workingHours</dd>
+                                        <dt>@Html.DisplayNameFor(model => model.Remarks)</dt>
+                                        <dd>@Html.DisplayFor(m => attachment.Remarks)</dd>
+
+                                        <dt>@Html.ShortNameFor(model => model.First().IsSigned)</dt>
+                                        <dd>@Constant.Signed</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <tr>
+                        <td><a data-target="#simple-listing-dialog-@attachment.Id" data-toggle="modal">@attachment.Id</a></td>
+                        <td>@attachment.AttachmentDate.ToString("d")</td>
+                        <td>@attachment.Rental.Machinist.LastName</td>
+                        <td>@attachment.Rental.Address.City</td>
+                        <td>@workingHours</td>
+                        <td>
+                            <button class="btn btn-sm pmd-btn-fab pmd-btn-raised pmd-ripple-effect btn-warning pmd-tooltip" 
+                                    data-toggle="tooltip" data-placement="top" title="Modifier attachement"
+                                    type="button">
+                                <i class="material-icons md-light pmd-sm"
+                                   onclick="location.href = '@Url.Action("Edit", "Attachment", new {id = attachment.Id})'">update</i>
+                            </button>
+                            <button data-machine-id="@attachment.Id" class="btn btn-sm pmd-btn-fab pmd-btn-raised pmd-ripple-effect btn-danger js-delete pmd-tooltip" 
+                                    data-toggle="tooltip" data-placement="top" title="Supprimer attachement"
+                                    type="button">
+                                <i class="material-icons pmd-sm">delete</i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+@section scripts
+{
+    <script>
+    $(document).ready(function () {
+        // Manage Toastr after form post
+        var success = "@TempData[Constant.Success]";
+        if (success === "@Constant.New") {
+            toastr.success("@Constant.NewAttachmentSaveSuccess");
+            success = "";
+        }
+        else if (success === "@Constant.Update") {
+            toastr.success("@Constant.AttachmentUpdateSuccess");
+            success = "";
+        }
+
+
+        //Build JQuery Datatable
+        var table = $('#attachments').DataTable({
+            responsive: {
+                details: {
+                    type: 'column',
+                    target: 'tr'
+                }
+            },
+            order: [0, 'asc'],
+            bFilter: true,
+            bLengthChange: true,
+            pagingType: "simple",
+            "paging": true,
+            "searching": true,
+            "language": {
+                "info": " _START_ - _END_ sur _TOTAL_ ",
+                "sLengthMenu": "<span class='custom-select-title'>Résultats par page:</span> <span class='custom-select'> _MENU_ </span>",
+                "sSearch": "",
+                "sSearchPlaceholder": "Rechercher",
+                "sInfoEmpty": "Affichage de l'&eacute;l&eacute;ment 0 &agrave; 0 sur 0 &eacute;l&eacute;ment",
+                "sInfoFiltered": "(filtr&eacute; de _MAX_ &eacute;l&eacute;ments au total)",
+                processing: "Traitement en cours...",
+                infoEmpty: "Affichage de l'&eacute;lement 0 &agrave; 0 sur 0 &eacute;l&eacute;ments",
+                loadingRecords: "Chargement en cours...",
+                zeroRecords: "Aucun &eacute;l&eacute;ment &agrave; afficher",
+                emptyTable: "Aucune donnée disponible dans le tableau",
+                aria: {
+                    sortAscending: ": activer pour trier la colonne par ordre croissant",
+                    sortDescending: ": activer pour trier la colonne par ordre décroissant"
+                },
+                "paginate": {
+                    "sNext": " ",
+                    "sPrevious": " "
+                }
+            },
+            dom:
+                "<'pmd-card-title'<'data-table-title'><'search-paper pmd-textfield'f>>" +
+                "<'custom-select-info'<'custom-select-item'><'custom-select-action'>>" +
+                "<'row'<'col-sm-12'tr>>" +
+                "<'pmd-card-footer' <'pmd-datatable-pagination' l i p>>"
+        });
+
+        // set datatables options
+        $('.custom-select-info').hide();
+        $("div.data-table-title").html('<h2 class="pmd-card-title-text">Liste des attachements journaliers</h2>');
+
+        // set column search
+        $('#attachments thead tr').clone(true).appendTo( '#attachments thead' );
+        $('#attachments thead tr:eq(1) th').each( function (i) {
+            var title = $(this).text();
+            $(this).html( '<input type="search" class="form-control input-sm" placeholder="'+title+'" />' );
+
+            $( 'input', this ).on( 'keyup change', function () {
+                if ( table.column(i).search() !== this.value ) {
+                    table
+                        .column(i)
+                        .search( this.value )
+                        .draw();
+                }
+            } );
+        } );
+
+        // activate tooltip management
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+
+        // Manage row/data deletion on click on corresponding button
+        $("#attachments").on("click", ".js-delete", function () {
+            var button = $(this);
+            // custom confirm box
+            bootbox.confirm({
+                message: "Êtes-vous sûr(e) de vouloir supprimer cette machine ?",
+                buttons: {
+                    cancel: {
+                        label: 'Annuler',
+                        className: 'btn btn-default pmd-ripple-effect pmd-btn-raised',
+                    },
+                    confirm: {
+                        label: 'Confirmer',
+                        className: 'btn btn-primary pmd-ripple-effect pmd-btn-raised',
+                    }
+                },
+                callback: function(result) {
+                    if (result) {
+                        $.ajax({
+                            url: '@Url.Action("Delete", "Attachment")/' + button.attr("data-machine-id"),
+                            method: "post",
+                            success: function () {
+                                toastr.success("Attachement journalier supprimée avec succès");
+                                table.row(button.parents("tr")).remove().draw();  // remove element from datatable and not just from the DOM using button.parents("tr").remove()
+                            }
+                        });
+                    }
+                }
+            });
+
+        });
+    });
+    </script>
+}
+

@@ -1,0 +1,95 @@
+﻿@model MachineRental.ViewModels.OrderViewModel
+@{
+    ViewBag.Title = "Formulaire Commande";
+}
+
+@if (Model.Order.Id == 0)
+{
+    <h1 class="text-center">Nouvelle commande</h1>
+}
+else
+{
+    <h1 class="text-center">Modifier commande</h1>
+}
+<hr />
+<br />
+
+<div class="row">
+    <div class="col-md-12 mb-md-0 mb-5">
+        @using (Html.BeginForm("Save", "Order", FormMethod.Post,
+                                    new { id = "ordersForm" }))
+        {
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group pmd-textfield pmd-textfield-floating-label">
+                        @Html.LabelFor(m => m.Order.CustomerId, new { @class = "control-label" })
+                        @Html.DropDownListFor(m => m.Order.CustomerId, new SelectList(Model.Customers, "Id", "Name"), "", new { @class = "form-control", required = "required" })
+                        @Html.ValidationMessageFor(m => m.Order.CustomerId)
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group pmd-textfield pmd-textfield-floating-label">
+                        @Html.LabelFor(m => m.Order.OrderDate, new { @class = "control-label" })
+                        @Html.TextBoxFor(m => m.Order.OrderDate, new { @class = "form-control", required = "required" })
+                        @Html.ValidationMessageFor(m => m.Order.OrderDate)
+                    </div>
+                </div>
+            </div>
+            @*<h2 class="text-center">Ajouter une location</h2>
+            <hr />
+            <button class="btn pmd-btn-fab pmd-btn-raised pmd-tooltip pmd-ripple-effect btn-primary"
+                    data-toggle="tooltip" data-placement="right" title="Ajouter une location" 
+                    type="button" onclick="AddRental()">
+                <i class="material-icons pmd-md">add</i>
+            </button>
+            <div>
+
+            </div>*@
+            <br />
+            <div class="text-center text-md-left">
+                @Html.HiddenFor(c => c.Order.Id)
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-primary pmd-ripple-effect pmd-btn-raised">Envoyer</button>
+            </div>
+        }
+    </div>
+</div>
+
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(document).ready(function () {
+            // datepicker JQuery
+            $(function () {
+                $("#Order_OrderDate").datepicker($.datepicker.regional["fr"]);
+                $('#Order_OrderDate').datepicker("option", {
+                    showOtherMonths: true,
+                    //language: "fr-FR",
+                    selectOtherMonths: true,
+                    //format: "dd/mm/yyyy",
+                    changeMonth: true,
+                    changeYear: true
+                });
+                $('#Order_OrderDate').datepicker("option", "showAnim", "clip");
+                // Setter
+                $('#Order_OrderDate').datepicker("option", "dateFormat", "dd/mm/yy");
+
+            });
+
+            // activate tooltip management
+            $(function () {
+                $('[data-toggle="tooltip"]').tooltip();
+            });
+        })
+        // fix date validator issue on Chrome
+        $.validator.addMethod("date",
+        function (value, element) {
+            return this.optional(element) || parseDate(value, "dd-MM-yyyy") !== null;
+        })
+    </script>
+}
+
+
+

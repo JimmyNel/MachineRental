@@ -1,0 +1,100 @@
+﻿.body-initial {
+    padding-top: 0;
+    padding-bottom: 20px;
+}
+
+.body-canvas, html-canvas {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.home-container {
+    max-width: inherit;
+}
+
+#home-img {
+    max-width: 100%;
+    max-height: auto;
+    object-fit: contain;
+}
+
+#logo-navbar {
+    width: 10em;
+    height: auto;
+    object-fit: contain;
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+/*input,
+select,
+textarea {
+    max-width: 280px;
+}*/
+
+
+[id$="error"] {
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 90%;
+    font-weight: bold;
+    color: #FF4136;
+}
+
+.canvas-container {
+    display: block;
+    position: relative;
+}
+
+#sketchpad {
+    display: block;
+    position: absolute;
+    background-color: #f8f9fa;
+    border: 1px solid black;
+} /* To remove the scrollbars */
+
+#canvasimg {
+    border: 1px solid black;
+}
+
+.field-validation-error, label.error {
+    width: 100%;
+    font-weight: bold;
+    margin-top: 0.25rem;
+    font-size: 90%;
+    color: #FF4136;
+}
+
+.input-validation-error, input.error {
+    border-color: #FF4136;
+}
+
+.validation-summary-errors {
+    color: #FF4136;
+    font-weight: bold;
+    margin: 6px; 
+    width: 100%;
+}

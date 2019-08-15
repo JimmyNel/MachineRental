@@ -1,0 +1,272 @@
+﻿@using MachineRental.Common
+@model IEnumerable<MachineRental.Models.Rental>
+
+@{
+    ViewBag.Title = "Locations";
+}
+
+<br />
+@*<button class="btn pmd-btn-fab pmd-btn-raised pmd-tooltip pmd-ripple-effect btn-primary"
+        data-toggle="tooltip" data-placement="right" title="Ajouter une rental"
+        type="button" onclick="location.href = '@Url.Action("Create", "Rentals")'">
+    <i class="material-icons pmd-md">add</i>
+</button>
+<br />
+<br />*@
+
+<!-- Table Card -->
+<div class="pmd-card pmd-z-depth">
+    <div class="table-responsive">
+        <table id="rentals" class="table pmd-table table-hover table-striped display responsive" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th style="width:17.6%">@Html.ShortNameFor(model => model.First().Id)</th>
+                    <th style="width:17.6%">@Html.ShortNameFor(model => model.First().RentalStatus)</th>
+                    <th style="width:17.6%">@Html.DisplayNameFor(model  => model.TimeStartRentalDate)</th>
+                    <th style="width:17.6%">@Html.DisplayNameFor(model => model.Order.CustomerId)</th>
+                    <th style="width:17.6%">@Html.ShortNameFor(model => model.First().AddressId)</th>
+                    <th style="width:12%">Modifier / Supprimer</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var rental in Model)
+                {
+                    <!-- Simple list Modal -->
+                    <div tabindex="-1" class="modal fade" id="simple-listing-dialog-@rental.Id" style="display: none;" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header pmd-modal-bordered">
+                                    <button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button>
+                                    <h2 class="pmd-card-title-text">Détails de la location</h2>
+                                </div>
+                                <div class="pmd-modal-list">
+                                    <dl class="dl-horizontal">
+                                        <dt>@Html.DisplayNameFor(model => model.OrderId)</dt>
+                                        <dd>@Html.DisplayFor(m => rental.OrderId)</dd>
+                                        <dt>@Html.DisplayNameFor(model => model.Id)</dt>
+                                        <dd>@Html.DisplayFor(m => rental.Id)</dd>
+                                        <dt>@Html.DisplayNameFor(model => model.RentalStatus)</dt>
+                                        <dd>@Html.DisplayFor(m => @rental.RentalStatus)</dd>
+                                        <dt>@Html.DisplayNameFor(model => model.Order.CustomerId)</dt>
+                                        <dd>@Html.DisplayFor(m => @rental.Order.Customer.Name)</dd>
+                                        <dd>@Html.DisplayFor(m => @rental.Order.Customer.Contact)</dd>
+                                        <dd>@Html.DisplayFor(m => @rental.Order.Customer.Phone)</dd>
+
+                                        <dt>@Html.DisplayNameFor(model => model.MachineId)</dt>
+                                        <dd>@Html.DisplayFor(m => @rental.Machine.Number)</dd>
+                                        <dt>@Html.DisplayNameFor(model => model.Equipment)</dt>
+                                        <dd>@Html.DisplayFor(m => @rental.Equipment)</dd>
+
+                                        <dt>@Html.DisplayNameFor(model => model.TimeStartRentalDate)</dt>
+                                        <dd>@rental.TimeStartRentalDate.ToString("d")</dd>
+                                        <dt>@Html.DisplayNameFor(model => model.TimeEndRentalDate)</dt>
+                                        @{var timeEndRentalDate = rental.TimeEndRentalDate?.ToString("d");}
+                                        <dd>@timeEndRentalDate</dd>
+
+                                        <dt>@Html.DisplayNameFor(model => model.AddressId)</dt>
+                                        <dd>@Html.DisplayFor(m => @rental.Address.Address1)</dd>
+                                        <dd>@Html.DisplayFor(m => @rental.Address.Address2)</dd>
+                                        <dd>@Html.DisplayFor(m => @rental.Address.ZipCode)</dd>
+                                        <dd>@Html.DisplayFor(m => @rental.Address.City)</dd>
+                                        <dd>@Html.DisplayFor(m => @rental.Address.Country)</dd>
+
+                                        <dt>@Html.DisplayNameFor(model => model.SiteManager)</dt>
+                                        <dd>@Html.DisplayFor(m => @rental.SiteManager)</dd>
+                                        <dt>@Html.DisplayNameFor(model => model.ManagerPhoneNumber)</dt>
+                                        <dd>@Html.DisplayFor(m => @rental.ManagerPhoneNumber)</dd>
+
+                                        <dt>@Html.DisplayNameFor(model => model.ClientPrice)</dt>
+                                        @{
+                                            if (rental.ClientPrice != null)
+                                            {
+                                                <dd>@Html.DisplayFor(m => @rental.ClientPrice)€</dd>
+                                            }
+                                            else
+                                            {
+                                                <dd>0€</dd>
+                                            }
+
+                                        }
+                                        <dt>@Html.DisplayNameFor(model => model.ClientTransferPrice)</dt>
+                                        @{
+                                            if (rental.ClientTransferPrice != null)
+                                            {
+                                                <dd>@Html.DisplayFor(m => @rental.ClientTransferPrice)€</dd>
+                                            }
+                                            else
+                                            {
+                                                <dd>0€</dd>
+                                            }
+                                        }
+
+                                        <dt>@Html.DisplayNameFor(model => model.Subcontractor)</dt>
+                                        <dd>@Html.DisplayFor(m => @rental.Subcontractor)</dd>
+
+                                        <dt>@Html.DisplayNameFor(model => model.SubcontractorPrice)</dt>
+                                        @{
+                                            if (rental.SubcontractorPrice != null)
+                                            {
+                                                <dd>@Html.DisplayFor(m => @rental.SubcontractorPrice)€</dd>
+                                            }
+                                            else
+                                            {
+                                                <dd>0€</dd>
+                                            }
+                                        }
+                                        <dt>@Html.DisplayNameFor(model => model.SubcontractorTransferPrice)</dt>
+                                        @{
+                                            if (rental.SubcontractorTransferPrice != null)
+                                            {
+                                                <dd>@Html.DisplayFor(m => @rental.SubcontractorTransferPrice)€</dd>
+                                            }
+                                            else
+                                            {
+                                                <dd>0€</dd>
+                                            }
+                                        }
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <tr>
+                        <td><a data-target="#simple-listing-dialog-@rental.Id" data-toggle="modal">@rental.Id</a></td>
+                        <td>@rental.RentalStatus</td>
+                        <td>@rental.TimeStartRentalDate.ToString("d")</td>
+                        <td>@rental.Order.Customer.Name</td>
+                        <td>@rental.Address.City</td>
+                        <td>
+                            <button class="btn btn-sm pmd-btn-fab pmd-btn-raised pmd-ripple-effect btn-warning pmd-tooltip" 
+                                    data-toggle="tooltip" data-placement="top" title="Modifier location"
+                                    type="button">
+                                <i class="material-icons md-light pmd-sm"
+                                   onclick="location.href = '@Url.Action("Edit", "Rental", new {id = @rental.Id})'">update</i>
+                            </button>
+                            <button data-rental-id="@rental.Id" class="btn btn-sm pmd-btn-fab pmd-btn-raised pmd-ripple-effect btn-danger js-delete pmd-tooltip" 
+                                    data-toggle="tooltip" data-placement="top" title="Supprimer location"
+                                    type="button">
+                                <i class="material-icons pmd-sm">delete</i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+@section scripts
+{
+    <script>
+    $(document).ready(function () {
+        // Manage Toastr after form post
+        var success = "@TempData[Constant.Success]";
+        if (success === "@Constant.New") {
+            toastr.success("@Constant.NewRentalSaveSuccess");
+        }
+        else if (success === "@Constant.Update") {
+            toastr.success("@Constant.RentalUpdateSuccess");
+        }
+
+        //Build JQuery Datatable
+        var table = $('#rentals').DataTable({
+            responsive: {
+                details: {
+                    type: 'column',
+                    target: 'tr'
+                }
+            },
+            order: [0, 'asc'],
+            bFilter: true,
+            bLengthChange: true,
+            pagingType: "simple",
+            "paging": true,
+            "searching": true,
+            "language": {
+                "info": " _START_ - _END_ sur _TOTAL_ ",
+                "sLengthMenu": "<span class='custom-select-title'>Résultats par page:</span> <span class='custom-select'> _MENU_ </span>",
+                "sSearch": "",
+                "sSearchPlaceholder": "Rechercher",
+                "sInfoEmpty": "Affichage de l'&eacute;l&eacute;ment 0 &agrave; 0 sur 0 &eacute;l&eacute;ment",
+                "sInfoFiltered": "(filtr&eacute; de _MAX_ &eacute;l&eacute;ments au total)",
+                processing: "Traitement en cours...",
+                infoEmpty: "Affichage de l'&eacute;lement 0 &agrave; 0 sur 0 &eacute;l&eacute;ments",
+                loadingRecords: "Chargement en cours...",
+                zeroRecords: "Aucun &eacute;l&eacute;ment &agrave; afficher",
+                emptyTable: "Aucune donnée disponible dans le tableau",
+                aria: {
+                    sortAscending: ": activer pour trier la colonne par ordre croissant",
+                    sortDescending: ": activer pour trier la colonne par ordre décroissant"
+                },
+                "paginate": {
+                    "sNext": " ",
+                    "sPrevious": " "
+                }
+            },
+            dom:
+                "<'pmd-card-title'<'data-table-title'><'search-paper pmd-textfield'f>>" +
+                "<'custom-select-info'<'custom-select-item'><'custom-select-action'>>" +
+                "<'row'<'col-sm-12'tr>>" +
+                "<'pmd-card-footer' <'pmd-datatable-pagination' l i p>>"
+        });
+
+        // set datatables options
+        $('.custom-select-info').hide();
+        $("div.data-table-title").html('<h2 class="pmd-card-title-text">Liste des locations</h2>');
+
+        // set column search
+        $('#rentals thead tr').clone(true).appendTo( '#rentals thead' );
+        $('#rentals thead tr:eq(1) th').each( function (i) {
+            var title = $(this).text();
+            $(this).html( '<input type="text" placeholder="Rechercher '+title+'" />' );
+ 
+            $( 'input', this ).on( 'keyup change', function () {
+                if ( table.column(i).search() !== this.value ) {
+                    table
+                        .column(i)
+                        .search( this.value )
+                        .draw();
+                }
+            } );
+        } );
+
+        // activate tooltip management
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+
+        // Manage row/data deletion on click on corresponding button
+        $("#rentals").on("click", ".js-delete", function () {
+            var button = $(this);
+            // custom confirm box
+            bootbox.confirm({
+                message: "Êtes-vous sûr(e) de vouloir supprimer cette location ?",
+                buttons: {
+                    cancel: {
+                        label: 'Annuler',
+                        className: 'btn btn-default pmd-ripple-effect pmd-btn-raised',
+                    },
+                    confirm: {
+                        label: 'Confirmer',
+                        className: 'btn btn-primary pmd-ripple-effect pmd-btn-raised',
+                    }
+                },
+                callback: function(result) {
+                    if (result) {
+                        $.ajax({
+                            url: '@Url.Action("Delete", "Rental")/' + button.attr("data-rental-id"),
+                            method: "post",
+                            success: function () {
+                                toastr.success("Location supprimée avec succès");
+                                table.row(button.parents("tr")).remove().draw();  // remove element from datatable and not just from the DOM using button.parents("tr").remove()
+                            }
+                        });
+                    }
+                }
+            });
+        });
+    });
+    </script>
+}
+

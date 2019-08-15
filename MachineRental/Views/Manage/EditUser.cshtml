@@ -1,0 +1,52 @@
+﻿@model MachineRental.ViewModels.UserInRoleViewModel
+@using MachineRental.Common
+@{
+    ViewBag.Title = "Modifier un utilisateur";
+}
+
+@*<h2>@ViewBag.Title.</h2>*@
+
+<div class="row">
+    <div class="center-block col-md-4" style="float:none">
+        @using (Html.BeginForm("SaveUser", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+        {
+            @Html.AntiForgeryToken()
+            <h4>Modifier un utilisateur.</h4>
+            <hr />
+            <div class="form-group pmd-textfield pmd-textfield-floating-label">
+                @Html.LabelFor(m => m.Username, new { @class = "control-label pmd-input-group-label" })
+                <div class="input-group">
+                    <div class="input-group-addon"><i class="material-icons md-dark pmd-sm">email</i></div>
+                    @Html.TextBoxFor(m => m.Username, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+            </div>
+            <div class="form-group pmd-textfield pmd-textfield-floating-label">
+                @Html.LabelFor(m => m.Role, new { @class = "control-label pmd-input-group-label" })
+                <div class="input-group">
+                    <div class="input-group-addon"><i class="material-icons md-dark pmd-sm">assignment_ind</i></div>
+                    @Html.DropDownListFor(m => m.RoleId, new SelectList(Model.Roles, "Id", "Name"), "", new { @class = "form-control" })
+                </div>
+                @Html.ValidationMessageFor(m => m.RoleId)
+            </div>
+            <div class="checkbox pmd-default-theme">
+                <label class="pmd-checkbox pmd-checkbox-ripple-effect">
+                    @Html.CheckBoxFor(m => m.IsEnabled)
+                    <span>@Html.LabelFor(m => m.IsEnabled)</span><br />
+                    @Html.ValidationMessageFor(m => m.IsEnabled)
+                </label>
+            </div>
+            <br />
+            <div class="form-group">
+                <div class="text-center text-md-left">
+                    @Html.HiddenFor(a => a.UserId)
+                    @Html.HiddenFor(a => a.RoleId)
+                    <input type="submit" class="btn btn-primary pmd-ripple-effect pmd-btn-raised" value="Modifier" />
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

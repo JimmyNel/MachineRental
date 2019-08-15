@@ -1,0 +1,45 @@
+﻿@using Microsoft.AspNet.Identity
+@using MachineRental.Common
+
+@if (Request.IsAuthenticated)
+{
+    if (User.IsInRole(Constant.RentalManager) || User.IsInRole(Constant.Admin))
+    {
+        using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    @*@Html.ActionLink("Hello " + User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })*@
+                    @Html.ActionLink("ADMINISTRATION", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage", @class = "nav-link" })
+                </li>
+                <li><a class="nav-link" href="javascript:document.getElementById('logoutForm').submit()">DECONNEXION</a></li>
+            </ul>
+        }
+    }
+    else if (User.IsInRole(Constant.Machinist))
+    {
+        using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <ul class="nav navbar-nav navbar-right">
+                @{  
+                    var username = User.Identity.GetUserName();
+                    var shortName = username.Substring(0, username.IndexOf("@"));
+                }
+                <li>
+                    @Html.ActionLink("Hello " + shortName + " !", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage", @class = "nav-link" })
+                </li>
+                <li><a class="nav-link" href="javascript:document.getElementById('logoutForm').submit()">DECONNEXION</a></li>
+            </ul>
+        }
+    }
+}
+else
+{
+    <ul class="navbar-nav navbar-right">
+        <li class="nav-item @(ViewContext.RouteData.Values["Action"].ToString() == "Login" ? "active" : "")">@Html.ActionLink("CONNEXION", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink", @class = "nav-link" })</li>
+    </ul>
+}

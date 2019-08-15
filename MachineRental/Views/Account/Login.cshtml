@@ -1,0 +1,62 @@
+﻿@model MachineRental.ViewModels.LoginViewModel
+@{
+    ViewBag.Title = "Se connecter";
+}
+
+@*<h2>@ViewBag.Title.</h2>*@
+
+<div class="row">
+    <div class="center-block col-md-4" style="float:none">
+        <section id="loginForm">
+            @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+            {
+                @Html.AntiForgeryToken()
+                <h2>Connectez-vous</h2>
+                <hr />
+                @Html.ValidationSummary(true, "", new { @class = "validation-summary-errors" })
+                <div class="form-group pmd-textfield pmd-textfield-floating-label">
+                    @Html.LabelFor(m => m.Email, new { @class = "control-label pmd-input-group-label" })
+                    <div class="input-group">
+                        <div class="input-group-addon"><i class="material-icons md-dark pmd-sm">email</i></div>
+                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(m => m.Email)
+                </div>
+                <div class="form-group pmd-textfield pmd-textfield-floating-label">
+                    @Html.LabelFor(m => m.Password, new { @class = "control-label pmd-input-group-label" })
+                    <div class="input-group">
+                        <div class="input-group-addon"><i class="material-icons md-dark pmd-sm">lock</i></div>
+                        @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(m => m.Password)
+                </div>
+                <div class="form-group checkbox pmd-default-theme">
+                    <label class="pmd-checkbox pmd-checkbox-ripple-effect" for="RememberMe">
+                        <input class="pm-ini" data-val="true" id="RememberMe" name="RememberMe" type="checkbox" value="true" checked="">
+                        @*<input class="pm-ini" name="RememberMe" type="hidden" value="false">*@
+                        <span class="pmd-checkbox-label">&nbsp;</span>
+                        <span>Mémoriser le mot de passe&nbsp;?</span>
+                    </label>
+                </div>
+                <br />
+                <br />
+                <div class="form-group">
+                    <div class="text-center text-md-left">
+                        <input type="submit" value="Se connecter" class="btn btn-primary pmd-ripple-effect pmd-btn-raised" />
+                    </div>
+                </div>
+                @*<p>
+                        @Html.ActionLink("Inscrire comme nouvel utilisateur", "Register")
+                    </p>*@
+                //Activez ceci une fois que vous avez activé la confirmation du compte pour la fonctionnalité de réinitialisation du mot de passe
+                <p>
+                    @Html.ActionLink("Vous avez oublié votre mot de passe ?", "ForgotPassword")
+                </p>
+            }
+        </section>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

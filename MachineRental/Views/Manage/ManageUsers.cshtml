@@ -1,0 +1,234 @@
+﻿@model IEnumerable<MachineRental.ViewModels.UserInRoleViewModel>
+@using MachineRental.Common
+
+@{
+    ViewBag.Title = "Utilisateurs";
+}
+
+<button class="btn pmd-btn-fab pmd-btn-raised pmd-tooltip pmd-ripple-effect btn-primary"
+        data-toggle="tooltip" data-placement="right" title="Ajouter un utilisateur"
+        type="button" onclick="location.href = '@Url.Action("Register", "Account")'">
+    <i class="material-icons pmd-md">add</i>
+</button>
+<br />
+<br />
+
+<!-- Table Card -->
+<div class="pmd-card pmd-z-depth">
+    <div class="table-responsive">
+        <table id="users" class="table pmd-table table-hover table-striped display responsive" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th style="width:20%">@Html.DisplayNameFor(model => model.Username)</th>
+                    <th style="width:20%">@Html.DisplayNameFor(model => model.Role)</th>
+                    <th style="width:20%">@Html.DisplayNameFor(model => model.IsEnabled)</th>
+                    <th style="width:20%">@Html.DisplayNameFor(model => model.EmailConfirmed)</th>
+                    <th style="width:20%">Email Conf. / Modif. / Supp.</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td><a href="mailto:@Html.DisplayFor(m => @user.Username)">@Html.DisplayFor(m => @user.Username)</td>
+                        <td>@user.Role</td>
+                        <td>
+                            @{
+                                if (user.IsEnabled)
+                                {
+                                    <i class="material-icons" style="color:#34a853;" value="ok">done_outline</i>
+                                }
+                                else
+                                {
+                                    <i class="material-icons" style="color:#ea4336;" value="nok">clear</i>
+                                }
+                            }
+                        </td>
+                        <td>
+                            @{
+                                if (user.EmailConfirmed)
+                                {
+                                    <i class="material-icons" style="color:#34a853;" value="ok">done_outline</i>
+                                }
+                                else
+                                {
+                                    <i class="material-icons" style="color:#ea4336;" value="nok">clear</i>
+                                }
+                            }
+                        </td>
+                        <td>
+                            <button data-user-id="@user.UserId"
+                                    data-user-email="@user.Username"
+                                    class="btn btn-sm pmd-btn-fab pmd-btn-raised pmd-ripple-effect btn-primary js-email pmd-tooltip"
+                                    data-toggle="tooltip" data-placement="top" title="Renvoyer email confirmation"
+                                    type="button">
+                                <i class="material-icons pmd-sm">add</i>
+                            </button>
+                            <button class="btn btn-sm pmd-btn-fab pmd-btn-raised pmd-ripple-effect btn-warning pmd-tooltip"
+                                    data-toggle="tooltip" data-placement="top" title="Modifier utilisateur"
+                                    type="button">
+                                <i class="material-icons md-light pmd-sm"
+                                   onclick="location.href = '@Url.Action("EditUser", "Manage", new {id = @user.UserId})'">update</i>
+                            </button>
+                            <button data-user-id="@user.UserId"
+                                    class="btn btn-sm pmd-btn-fab pmd-btn-raised pmd-ripple-effect btn-danger js-delete pmd-tooltip"
+                                    data-toggle="tooltip" data-placement="top" title="Supprimer utilisateur"
+                                    type="button">
+                                <i class="material-icons pmd-sm">delete</i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+@section scripts
+{
+    <script>
+    $(document).ready(function () {
+        // Manage Toastr after form post
+        var success = "@TempData[Constant.Success]";
+        if (success === "@Constant.New") {
+            toastr.success("@Constant.NewUserSaveSuccess");
+            success = "";
+        }
+        else if (success === "@Constant.Update") {
+            toastr.success("@Constant.UserUpdateSuccess");
+            success = "";
+        }
+
+        //Build JQuery Datatable
+        var table = $('#users').DataTable({
+            responsive: {
+                details: {
+                    type: 'column',
+                    target: 'tr'
+                }
+            },
+            order: [0, 'asc'],
+            bFilter: true,
+            bLengthChange: true,
+            pagingType: "simple",
+            "paging": true,
+            "searching": true,
+            "language": {
+                "info": " _START_ - _END_ sur _TOTAL_ ",
+                "sLengthMenu": "<span class='custom-select-title'>Résultats par page:</span> <span class='custom-select'> _MENU_ </span>",
+                "sSearch": "",
+                "sSearchPlaceholder": "Rechercher",
+                "sInfoEmpty": "Affichage de l'&eacute;l&eacute;ment 0 &agrave; 0 sur 0 &eacute;l&eacute;ment",
+                "sInfoFiltered": "(filtr&eacute; de _MAX_ &eacute;l&eacute;ments au total)",
+                processing: "Traitement en cours...",
+                infoEmpty: "Affichage de l'&eacute;lement 0 &agrave; 0 sur 0 &eacute;l&eacute;ments",
+                loadingRecords: "Chargement en cours...",
+                zeroRecords: "Aucun &eacute;l&eacute;ment &agrave; afficher",
+                emptyTable: "Aucune donnée disponible dans le tableau",
+                aria: {
+                    sortAscending: ": activer pour trier la colonne par ordre croissant",
+                    sortDescending: ": activer pour trier la colonne par ordre décroissant"
+                },
+                "paginate": {
+                    "sNext": " ",
+                    "sPrevious": " "
+                }
+            },
+            dom:
+                "<'pmd-card-title'<'data-table-title'><'search-paper pmd-textfield'f>>" +
+                "<'custom-select-info'<'custom-select-item'><'custom-select-action'>>" +
+                "<'row'<'col-sm-12'tr>>" +
+                "<'pmd-card-footer' <'pmd-datatable-pagination' l i p>>"
+        });
+
+        // set datatables options
+        $('.custom-select-info').hide();
+        $("div.data-table-title").html('<h2 class="pmd-card-title-text">Liste des utilisateurs</h2>');
+
+        // set column search
+        $('#users thead tr').clone(true).appendTo( '#users thead' );
+        $('#users thead tr:eq(1) th').each( function (i) {
+            var title = $(this).text();
+            $(this).html( '<input type="text" placeholder="Rechercher '+title+'" />' );
+
+            $( 'input', this ).on( 'keyup change', function () {
+                if ( table.column(i).search() !== this.value ) {
+                    table
+                        .column(i)
+                        .search( this.value )
+                        .draw();
+                }
+            } );
+        } );
+
+        // activate tooltip management
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+
+        // Manage row/data deletion on click on corresponding button
+        $("#users").on("click", ".js-delete", function () {
+            var button = $(this);
+            // custom confirm box
+            bootbox.confirm({
+                message: "Êtes-vous sûr(e) de vouloir supprimer cet utilisateur ?",
+                buttons: {
+                    cancel: {
+                        label: 'Annuler',
+                        className: 'btn btn-default pmd-ripple-effect pmd-btn-raised',
+                    },
+                    confirm: {
+                        label: 'Confirmer',
+                        className: 'btn btn-primary pmd-ripple-effect pmd-btn-raised',
+                    }
+                },
+                callback: function(result) {
+                    if (result) {
+                        $.ajax({
+                            url: '@Url.Action("DeleteUser", "Manage")/' + button.attr("data-user-id"),
+                            method: "post",
+                            success: function () {
+                                toastr.success("Utilisateur supprimé avec succès");
+                                table.row(button.parents("tr")).remove().draw();  // remove element from datatable and not just from the DOM using button.parents("tr").remove()
+                            }
+                        });
+                    }
+                }
+            });
+
+        });
+
+        // Manage row/data email confirmation sending on click on corresponding button
+        $("#users").on("click", ".js-email", function () {
+            var button = $(this);
+            // custom confirm box
+            bootbox.confirm({
+                message: "Êtes-vous sûr(e) de vouloir renvoyer un email de confirmation à " + button.attr("data-user-email") + " ?",
+                buttons: {
+                    cancel: {
+                        label: 'Annuler',
+                        className: 'btn btn-default pmd-ripple-effect pmd-btn-raised',
+                    },
+                    confirm: {
+                        label: 'Confirmer',
+                        className: 'btn btn-primary pmd-ripple-effect pmd-btn-raised',
+                    }
+                },
+                callback: function(result) {
+                    if (result) {
+                        $.ajax({
+                            url: '@Url.Action("GenerateEmailConfirmation", "Manage")/' + button.attr("data-user-id"),
+                            method: "post",
+                            success: function () {
+                                toastr.success("Email de confirmation envoyé avec succès");
+                            }
+                        });
+                    }
+                }
+            });
+
+        });
+    });
+    </script>
+}
