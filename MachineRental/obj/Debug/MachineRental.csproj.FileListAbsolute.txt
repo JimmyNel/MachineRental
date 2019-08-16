@@ -274,3 +274,4 @@ C:\Users\PC Jimmy\source\repos\ASP.NET\MachineRentalForGit\MachineRental\obj\Deb
 C:\Users\PC Jimmy\source\repos\ASP.NET\MachineRentalForGit\MachineRental\obj\Debug\MachineRental.csproj.CopyComplete
 C:\Users\PC Jimmy\source\repos\ASP.NET\MachineRentalForGit\MachineRental\obj\Debug\MachineRental.dll
 C:\Users\PC Jimmy\source\repos\ASP.NET\MachineRentalForGit\MachineRental\obj\Debug\MachineRental.pdb
+C:\Users\PC Jimmy\source\repos\ASP.NET\MachineRentalForGit\MachineRental\obj\Debug\MachineRental.csprojAssemblyReference.cache
